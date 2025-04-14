@@ -1,0 +1,64 @@
+
+services:
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+        
+  envoy:
+    image: envoyproxy/envoy:v1.23-latest
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml:ro
+    ports:
+    - "10000:10000" # HTTP listener port
+    - "9901:9901" # Admin interface port
+    depends_on:
+    - django_project11
+    - django_project22
+    networks:
+    - my_network
+    
+  django_project11:
+    container_name: floreria1
+    build: .
+    ports:
+      - "8000:8000"
+    command: gunicorn floreria.wsgi:application --bind 0.0.0.0:8000
+    networks:
+      - my_network
+    env_file:
+      - .env
+
+  django_project22:
+    container_name: floreria2
+    build: .
+    ports:
+      - "8001:8001"
+    command: gunicorn floreria.wsgi:application --bind 0.0.0.0:8001
+    networks:
+      - my_network
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
+  
+
+networks:
+  my_network:
+    driver: bridge

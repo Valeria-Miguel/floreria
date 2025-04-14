@@ -1,0 +1,420 @@
+{crearsuper usuairo 
+docker-compose exec django_project11 python manage.py shell
+from django.contrib.auth.models import Group
+
+# Crear grupos si no existen
+Group.objects.get_or_create(name='Administrador')
+Group.objects.get_or_create(name='Empleado')
+Group.objects.get_or_create(name='Viewer')
+
+# Verificar grupos
+print(Group.objects.all())
+exit()
+docker-compose exec django_project11 python manage.py createsuperuser}
+cd flor
+}
+//<-----------------{/*API 1 USUARIO */ }-----------------
+{
+///////// VVER TODOS LOS USUARIOS ////////////77
+get http://127.0.0.1:10000/api/users/users/
+resultado: 
+[
+  {
+    "id": 2,
+    "username": "florista345",
+    "email": "florista345@floreria.com",
+    "first_name": "Dul",
+    "last_name": "Miguel",
+    "second_last_name": "juan",
+    "role": null
+  },
+  {
+    "id": 3,
+    "username": "empleado",
+    "email": "empleado@example.com",
+    "first_name": "empleado",
+    "last_nam continua":""
+  }]
+ //////// REGISTRARSE USUSARIO ///
+post http://127.0.0.1:10000/api/users/register/
+{
+    "username": "AZUCAR",
+    "email": "azucar@example.com",
+    "password": "test123",
+    "first_name": "azucar",
+    "last_name": "User",
+    "role":"Empleado"
+  }
+  {
+    "username": "valeriam",
+    "email": "valeria@example.com",
+    "password": "test123",
+    "first_name": "azucar",
+    "last_name": "User",
+    "role":"Administrador"
+  }
+  {
+    "username": "sara",
+    "email": "sara@example.com",
+    "password": "test123",
+    "first_name": "azucar",
+    "last_name": "User",
+    "role":"Administrador"
+  }
+  Resultado: 
+  {
+    "id": 60,
+    "username": "AZUCAR",
+    "email": "azucar@example.com",
+    "first_name": "azucar",
+    "last_name": "User",
+    "second_last_name": "",
+    "role": "Empleado"
+  }
+
+
+  /////// ACTUALIZAR USUARIO ////////////77
+  PUT http://127.0.0.1:8000/api/users/users/{id}/
+  {
+    "username": "AZUaCAR",
+    "email": "azucaaar@example.com",
+    "first_name": "aaazucar",
+    "last_name": "Usaer",
+    "password":"123dulce",
+    "second_last_name": "",
+    "update_role": "Administrador" //necesario emviarlo asi para que cambie
+  }
+  /////// ELIMINR USUARIO //////
+  delete   http://127.0.0.1:8000/api/users/users/{id}/
+  
+}
+
+//<-----------------{/*API 2 flores */ }-----------------
+{
+  <----------------//// FLORES ////////////////7------------se aplica el patron builders ------------->
+ GET CON TOKEN --- TODOS LAS FLORES
+ http://127.0.0.1:8000/api/flowers/list
+ [
+  {
+    "id": 1,
+    "name": "Girasol",
+    "color": "Amarillo",
+    "price": "1.75",
+    "stock": 50,
+    "description": "Girasol fresco de temporada",
+    "created_at": "2025-04-10T05:44:36.146466Z",
+    "updated_at": "2025-04-10T05:44:36.146504Z",
+    "has_scent": false,
+    "bloom_season": "Verano",
+    "stem_length": 40,
+    "lifespan": 5,
+    "created_by": 2
+  }
+]
+////// AÑADIR FLOR //////////
+POST CON TOKEN 
+/create/
+{
+  "name": "Girasol",
+  "color": "Amarillo",
+  "price": 1.75,
+  "stock": 50,
+  "description": "Girasol fresco de temporada",
+  "has_scent": false,
+  "bloom_season": "Verano",
+  "stem_length": 40,
+  "lifespan": 5
+}
+RESPUESTA
+{
+  "id": 1,
+  "name": "Rosa",
+  "price": "12.99",
+  "stock": 50,
+  "description": "Rosa roja fresca",
+  "created_at": "2025-04-08T20:54:54.558219Z",
+  "created_by": null
+}
+
+///// ACTUALIZAR FLORES:///7
+PUT CON TOKEN http://127.0.0.1:8000/api/flowers/update/1/
+{
+  "name": "saaa",
+  "color": "rojoaa",
+  "price": 1.75,
+  "stock": 55,
+  "description": "mar fraesco de temporada",
+  "has_scent": false,
+  "bloom_season": "sl",
+  "stem_length": 20,
+  "lifespan": 3
+}
+  RESPUESTA{
+    "id": 2,
+    "name": "saaa",
+    "color": "rojoaa",
+    "price": "1.75",
+    "stock": 55,
+    "description": "mar fraesco de temporada",
+    "created_at": "2025-04-10T05:46:23.151343Z",
+    "updated_at": "2025-04-10T05:48:00.907945Z",
+    "has_scent": false,
+    "bloom_season": "sl",
+    "stem_length": 20,
+    "lifespan": 3,
+    "created_by": 2
+  }
+
+/////////////// ELIINAR FLOR ///////////
+DELETE con oken http://127.0.0.1:8000/api/flowers/delete/{id}/
+
+}
+
+//<-----------------{/*API 3 ordenes */ }-----------------
+{///estado definidos: PENDIENTE, EN PREPARACIÓN, LISTA, ENTREGADA, CANCELADA
+//// añadir 
+Órdenes:
+GET /api/orders/ - Listar todas las órdenes
+[
+  {
+    "id": 1,
+    "customer": 2,
+    "created_at": "2025-04-10T06:31:30.927392Z",
+    "updated_at": "2025-04-10T06:31:30.927921Z",
+    "delivery_address": "Av. Principal 456",
+    "delivery_date": "2025-04-20T15:00:00Z",
+    "current_state": "PENDING",
+    "current_state_display": "Pendiente",
+    "notes": "Por favor entregar después de las 14:00",
+    "items": [],
+    "total_price": "0.00"
+  },
+  {
+    "id": 2,
+    "customer": 2,
+    "created_at": "2025-04-10T06:44:26.775856Z",
+    "updated_at": "2025-04-10T06:44:26.776431Z",
+    "delivery_address": "Calle Flores 123, Jardín Botánico",
+    "delivery_date": "2025-05-20T14:00:00Z",
+    "current_state": "PENDING",
+    "current_state_display": "Pendiente",
+    "notes": "Por favor incluir tarjeta de felicitación",
+    "items": [
+      {
+        "id": 1,
+        "flower": 1,
+        "quantity": 5,
+        "unit_price": "1.75",
+        "subtotal": 8.75
+      },
+      {
+        "id": 2,
+        "flower": 3,
+        "quantity": 2,
+        "unit_price": "1.75",
+        "subtotal": 3.5
+      }
+    ],
+    "total_price": "12.25"
+  }
+]
+POST /api/orders/ - Crear nueva orden
+{
+  "delivery_address": "Av. Principal 456",
+  "delivery_date": "2025-04-20T15:00:00Z",
+  "notes": "Por favor entregar después de las 14:00",
+  "items": []
+}
+{
+  "delivery_address": "Calle Flores 123, Jardín Botánico",
+  "delivery_date": "2025-05-20T14:00:00Z",
+  "notes": "Por favor incluir tarjeta de felicitación",
+  "items": [
+      {
+          "flower": 1,
+          "quantity": 5
+      },
+      {
+          "flower": 3,
+          "quantity": 2
+      }
+  ]
+}
+respuesta {
+  "id": 1,
+  "customer": 2,
+  "created_at": "2025-04-10T06:31:30.927392Z",
+  "updated_at": "2025-04-10T06:31:30.927921Z",
+  "delivery_address": "Av. Principal 456",
+  "delivery_date": "2025-04-20T15:00:00Z",
+  "current_state": "PENDING",
+  "current_state_display": "Pendiente",
+  "notes": "Por favor entregar después de las 14:00",
+  "items": [],
+  "total_price": "0.00"
+}
+GET /api/orders/<order_id>/ - Obtener detalles de una orden
+{
+  "id": 1,
+  "customer": 2,
+  "created_at": "2025-04-10T06:31:30.927392Z",
+  "updated_at": "2025-04-10T06:31:30.927921Z",
+  "delivery_address": "Av. Principal 456",
+  "delivery_date": "2025-04-20T15:00:00Z",
+  "current_state": "PENDING",
+  "current_state_display": "Pendiente",
+  "notes": "Por favor entregar después de las 14:00",
+  "items": [],
+  "total_price": "0.00"
+}
+PUT/PATCH /api/orders/<order_id>/ - Actualizar una orden
+{
+  "delivery_address": "Aaaavenida Jardines 456, Bosque",
+  "delivery_date": "2026-05-21T10:00:00Z",
+  "items": [
+      {
+          "flower": 1,
+          "quantity": 5
+      },
+      {
+          "flower": 3,
+          "quantity": 2
+      }
+  ]
+}
+RESPUETSA
+{
+  "id": 1,
+  "customer": 2,
+  "created_at": "2025-04-10T06:31:30.927392Z",
+  "updated_at": "2025-04-10T07:30:05.679504Z",
+  "delivery_address": "Aaaavenida Jardines 456, Bosque",
+  "delivery_date": "2026-05-21T10:00:00Z",
+  "current_state": "PENDING",
+  "current_state_display": "Pendiente",
+  "notes": "Por favor entregar después de las 14:00",
+  "items": [
+    {
+      "id": 3,
+      "flower": 1,
+      "quantity": 5,
+      "unit_price": "1.75",
+      "subtotal": 8.75
+    },
+    {
+      "id": 4,
+      "flower": 3,
+      "quantity": 2,
+      "unit_price": "1.75",
+      "subtotal": 3.5
+    }
+  ],
+  "total_price": "12.25"
+}
+DELETE /api/orders/<order_id>/ - Eliminar una orden (solo admin)
+FUNCIONA
+PATCH /api/orders/<order_id>/state/ - Cambiar estado de la orden
+
+Items de Órdenes:
+GET /api/orders/<order_id>/items/ - Listar items de una orden
+[
+  {
+    "id": 3,
+    "flower": 1,
+    "quantity": 5,
+    "unit_price": "1.75",
+    "subtotal": 8.75
+  },
+  {
+    "id": 4,
+    "flower": 3,
+    "quantity": 2,
+    "unit_price": "1.75",
+    "subtotal": 3.5
+  }
+]
+POST /api/orders/<order_id>/items/create/ - Añadir item a una orden
+No funciona pero se puede haer desde PUST orders/id
+GET /api/orders/<order_id>/items/<item_id>/ - Obtener detalle de item
+
+no funcion
+DELETE /api/orders/<order_id>/items/<item_id>/ - Eliminar item
+no funcio
+
+
+
+
+
+
+}
+
+//<--------------{API 4 proveedores}----------------
+{
+post http://127.0.0.1:8000/api/suppliers
+  {
+    "name": "Viveros Santa María",
+    "contact_person": "Juan Pérez",
+    "email": "contacto@viverossantamaria.com",
+    "phone": "+56912345678",
+    "address": "Camino Vecinal 1234, Rancagua",
+    "tax_id": "123456789",
+    "notes": "Entregan los martes y jueves"
+}
+resuesta 
+{
+  "id": 1,
+  "name": "Viveros Santa María",
+  "contact_person": "Juan Pérez",
+  "email": "contacto@viverossantamaria.com",
+  "phone": "+56912345678",
+  "address": "Camino Vecinal 1234, Rancagua",
+  "tax_id": "123456789",
+  "notes": "Entregan los martes y jueves",
+  "created_by": 2,
+  "created_at": "2025-04-10T08:03:36.008242Z",
+  "updated_at": "2025-04-10T08:03:36.008410Z"
+}
+
+get http://127.0.0.1:8000/api/suppliers/1
+respuesta {
+  "id": 1,
+  "name": "Viveros Santa María",
+  "contact_person": "Juan Pérez",
+  "email": "contacto@viverossantamaria.com",
+  "phone": "+56912345678",
+  "address": "Camino Vecinal 1234, Rancagua",
+  "tax_id": "123456789",
+  "notes": "Entregan los martes y jueves",
+  "created_by": 2,
+  "created_at": "2025-04-10T08:03:36.008242Z",
+  "updated_at": "2025-04-10T08:03:36.008410Z"
+}
+
+put http://127.0.0.1:8000/api/suppliers/1
+{
+  "name": "Queso Santa María",
+  "contact_person": "Juanaa Pérez",
+  "email": "contacto@viverossantamaria.com",
+  "phone": "+56912345678",
+  "address": "Camino Vecinal 1234, Rancagua",
+  "tax_id": "123456789",
+  "notes": "Entregan los martes y jueves"
+}
+respuesta
+{
+  "id": 1,
+  "name": "Queso Santa María",
+  "contact_person": "Juanaa Pérez",
+  "email": "contacto@viverossantamaria.com",
+  "phone": "+56912345678",
+  "address": "Camino Vecinal 1234, Rancagua",
+  "tax_id": "123456789",
+  "notes": "Entregan los martes y jueves",
+  "created_by": 2,
+  "created_at": "2025-04-10T08:03:36.008242Z",
+  "updated_at": "2025-04-10T08:05:32.882281Z"
+}
+
+delete http://127.0.0.1:8000/api/suppliers/id
+
+}
